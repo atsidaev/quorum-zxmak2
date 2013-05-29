@@ -40,14 +40,19 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="ZXMAK2">
-      <HintPath>..\..\..\..\zxmak235\ZXMAK2.exe</HintPath>
+    <Reference Include="ZXMAK2, Version=2.3.9.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <ExecutableExtension>.exe</ExecutableExtension>
+      <HintPath>..\..\..\..\zxmak240\ZXMAK2.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CPU.cs" />
+    <Compile Include="QBeeper.cs" />
+    <Compile Include="Qu128orum.cs" />
+    <Compile Include="Quorum64CPM.cs" />
     <Compile Include="Quorum64Keyboard.cs" />
     <Compile Include="Quorum64Memory.cs" />
+    <Compile Include="QuorumPorts.cs" />
     <Compile Include="UlaQuorum64.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

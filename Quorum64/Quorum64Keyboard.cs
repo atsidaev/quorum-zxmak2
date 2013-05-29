@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using ZXMAK2.Engine.Interfaces;
 using ZXMAK2.Engine.Z80;
+using ZXMAK2.Logging;
 
 namespace Quorum64
 {
-	public class Quorum64Keyboard : IKeyboardDevice, IBusDevice
+	public class KeyboardQuorum : IKeyboardDevice, IBusDevice
 	{
 		private int m_busOrder;
 		private long m_intState;
@@ -15,10 +16,14 @@ namespace Quorum64
 		private IKeyboardState m_keyboardState;
 		private Z80CPU m_cpu;
 
-		public int BusOrder { get; set; }
+		public int BusOrder
+		{
+			get { return m_busOrder; }
+			set { m_busOrder = value; }
+		}
 		public BusCategory Category { get { return BusCategory.Keyboard; } }
-		public string Name { get { return "Quorum"; } }
-		public string Description { get { return "Quorum extended keyboard"; } }
+		public string Name { get { return "Quorum Keyboard_test"; } }
+		public string Description { get { return "Quorum extended keyboard\n\n(c) Eltaron"; } }
 
 
 		public void BusConnect()
@@ -31,8 +36,8 @@ namespace Quorum64
 
 		public void BusInit(IBusManager bmgr)
 		{
-			bmgr.SubscribeRDIO(0x99, 0x98, new BusReadIoProc(this.readPortFE));
-			bmgr.SubscribeRDIO(0x99, 0x18, new BusReadIoProc(this.readPort7E));
+			bmgr.SubscribeRDIO(0x99, 0x98, readPortFE);
+			bmgr.SubscribeRDIO(0x99, 0x18, readPort7E);
 
 			bmgr.SubscribeNMIACK(NMIACK);
 
@@ -52,7 +57,7 @@ namespace Quorum64
 
 		private void readPort7E(ushort addr, ref byte value, ref bool iorqge)
 		{
-			// Quorum ROM contains modificated keyboard procedures so we MUST handle 0x7E port
+			// Quorum ROM contains modificated keyboad procedures so we MUST handle 0x7E port
 			// otherwise we'll get no keyboard at all, even 0xFE one
 
 			value = (byte)(value & 0xC0);
@@ -374,14 +379,14 @@ namespace Quorum64
 			{
 				num = (byte)(num | 0x2);
 			}
-			//if (state[Key.NumPad1])
-			//{
-			//    num = (byte)(num | 0x8);
-			//}
-			//if (state[Key.NumPad2])
-			//{
-			//    num = (byte)(num | 0x10);
-			//}
+			if (state[Key.NumPad1])
+			{
+				num = (byte)(num | 0x8);
+			}
+			if (state[Key.NumPad2])
+			{
+				num = (byte)(num | 0x10);
+			}
 			if (state[Key.Period])
 			{
 				num = (byte)(num | 0x20);
@@ -400,22 +405,22 @@ namespace Quorum64
 			{
 				num = (byte)(num | 2);
 			}
-			//if (state[Key.Tilda]) // ^ arrow
-			//{
-			//    num = (byte)(num | 4);
-			//}
-			//if (state[Key.NumPad4])
-			//{
-			//    num = (byte)(num | 8);
-			//}
+			if (state[Key.Grave]) // ^ arrow
+			{
+				num = (byte)(num | 4);
+			}
+			if (state[Key.NumPad4])
+			{
+				num = (byte)(num | 8);
+			}
 			if (state[Key.Apostrophe])
 			{
 				num = (byte)(num | 0x10);
 			}
-			//if (state[Key.NumPad6])
-			//{
-			//    num = (byte)(num | 0x20);
-			//}
+			if (state[Key.NumPad6])
+			{
+				num = (byte)(num | 0x20);
+			}
 			return num;
 		}
 		private static byte scan_FB7E(IKeyboardState state)
@@ -429,18 +434,18 @@ namespace Quorum64
 			{
 				num = (byte)(num | 2);
 			}
-			//if (state[Key.NumPad7])
-			//{
-			//    num = (byte)(num | 8);
-			//}
-			//if (state[Key.NumPad5])
-			//{
-			//    num = (byte)(num | 0x10);
-			//}
-			//if (state[Key.NumPad9])
-			//{
-			//    num = (byte)(num | 0x20);
-			//}
+			if (state[Key.NumPad7])
+			{
+				num = (byte)(num | 8);
+			}
+			if (state[Key.NumPad5])
+			{
+				num = (byte)(num | 0x10);
+			}
+			if (state[Key.NumPad9])
+			{
+				num = (byte)(num | 0x20);
+			}
 			return num;
 		}
 		private static byte scan_F77E(IKeyboardState state)
@@ -462,10 +467,10 @@ namespace Quorum64
 			{
 				num = (byte)(num | 8);
 			}
-			//if (state[Key.NumPad8])
-			//{
-			//    num = (byte)(num | 0x10);
-			//}
+			if (state[Key.NumPad8])
+			{
+				num = (byte)(num | 0x10);
+			}
 			if (state[Key.NumPadMinus])
 			{
 				num = (byte)(num | 0x20);
@@ -510,10 +515,10 @@ namespace Quorum64
 			{
 				num = (byte)(num | 2);
 			}
-			//if (state[Key.BackSlash])
-			//{
-			//    num = (byte)(num | 4);
-			//}
+			if (state[Key.BackSlash])
+			{
+				num = (byte)(num | 4);
+			}
 			if (state[Key.RightBracket])
 			{
 				num = (byte)(num | 0x10);
@@ -536,10 +541,10 @@ namespace Quorum64
 			{
 				num = (byte)(num | 0x10);
 			}
-			//if (state[Key.NumPad3])
-			//{
-			//    num = (byte)(num | 0x20);
-			//}
+			if (state[Key.NumPad3])
+			{
+				num = (byte)(num | 0x20);
+			}
 			return num;
 		}
 
@@ -550,14 +555,15 @@ namespace Quorum64
 			{
 				num = (byte)(num | 2);
 			}
-			//if (state[Key.NumPad0])
-			//{
-			//    num = (byte)(num | 8);
-			//}
-			//if (state[Key.NumPadDot])
-			//{
-			//    num = (byte)(num | 0x10);
-			//}
+			if (state[Key.NumPad0])
+			{
+				num = (byte)(num | 8);
+			}
+			if (state[(Key)83])
+			{
+				Logger.GetLogger().LogTrace("NUMPAD DOT PRESSED!!!");
+				num = (byte)(num | 0x10);
+			}
 			if (state[Key.NumPadPlus])
 			{
 				num = (byte)(num | 0x20);
